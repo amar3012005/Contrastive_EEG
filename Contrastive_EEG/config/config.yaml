@@ -1,0 +1,54 @@
+# Contrastive EEG-to-Text Model Configuration
+
+# Dataset parameters
+dataset:
+  data_path: "/home/teaching/Contrastive_EEG/Contrastive_EEG/Zuco/task1-SR/Preprocessed"  # Updated path for Linux environment
+  vocab_size: 10000
+  min_freq: 5
+  max_seq_len: 2000
+  train_split: 0.8
+  batch_size: 32
+
+# EEG encoder parameters
+eeg_encoder:
+  input_size: 105  # Will be determined from the dataset
+  hidden_size: 768
+  num_layers: 6
+  num_heads: 8
+  dropout: 0.1
+  dim_feedforward: 2048
+
+# Text encoder parameters
+text_encoder:
+  model: "facebook/bart-base"
+  freeze_first_step: true
+  unfreeze_embeddings: true
+  unfreeze_first_layer: true
+
+# Projection head parameters
+projection:
+  hidden_dim: 256
+  output_dim: 128
+  dropout: 0.1
+
+# Training parameters
+training:
+  # Step 1: Initial training with frozen BART
+  step1:
+    epochs: 50
+    lr: 0.01
+    lr_step: 20
+    lr_gamma: 0.1
+    
+  # Step 2: Fine-tuning all parameters
+  step2:
+    epochs: 30
+    lr: 0.001
+    lr_step: 10
+    lr_gamma: 0.1
+  
+  # Common parameters
+  optimizer: "sgd"  # sgd or adam
+  momentum: 0.9
+  temperature: 0.07
+  save_dir: "/home/teaching/Contrastive_EEG/Contrastive_EEG/output/contrastive_model"
